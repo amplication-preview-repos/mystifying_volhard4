@@ -16,17 +16,35 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { MechanicService } from "../mechanic.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { MechanicCreateInput } from "./MechanicCreateInput";
 import { Mechanic } from "./Mechanic";
 import { MechanicFindManyArgs } from "./MechanicFindManyArgs";
 import { MechanicWhereUniqueInput } from "./MechanicWhereUniqueInput";
 import { MechanicUpdateInput } from "./MechanicUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class MechanicControllerBase {
-  constructor(protected readonly service: MechanicService) {}
+  constructor(
+    protected readonly service: MechanicService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Mechanic })
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async createMechanic(
     @common.Body() data: MechanicCreateInput
   ): Promise<Mechanic> {
@@ -40,9 +58,18 @@ export class MechanicControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Mechanic] })
   @ApiNestedQuery(MechanicFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async mechanics(@common.Req() request: Request): Promise<Mechanic[]> {
     const args = plainToClass(MechanicFindManyArgs, request.query);
     return this.service.mechanics({
@@ -55,9 +82,18 @@ export class MechanicControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Mechanic })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async mechanic(
     @common.Param() params: MechanicWhereUniqueInput
   ): Promise<Mechanic | null> {
@@ -77,9 +113,18 @@ export class MechanicControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Mechanic })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async updateMechanic(
     @common.Param() params: MechanicWhereUniqueInput,
     @common.Body() data: MechanicUpdateInput
@@ -107,6 +152,14 @@ export class MechanicControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Mechanic })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteMechanic(
     @common.Param() params: MechanicWhereUniqueInput
   ): Promise<Mechanic | null> {

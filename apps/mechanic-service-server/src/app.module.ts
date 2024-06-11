@@ -3,6 +3,13 @@ import { CustomerModule } from "./customer/customer.module";
 import { MechanicModule } from "./mechanic/mechanic.module";
 import { AdminModule } from "./admin/admin.module";
 import { OrderModule } from "./order/order.module";
+import { CategoryModule } from "./category/category.module";
+import { MontirModule } from "./montir/montir.module";
+import { ServiceModule } from "./service/service.module";
+import { StatusModule } from "./status/status.module";
+import { VehicleModule } from "./vehicle/vehicle.module";
+import { UserModule } from "./user/user.module";
+import { CustomerOrderModule } from "./customerOrder/customerOrder.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SecretsManagerModule } from "./providers/secrets/secretsManager.module";
@@ -12,13 +19,25 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 
+import { ACLModule } from "./auth/acl.module";
+import { AuthModule } from "./auth/auth.module";
+
 @Module({
   controllers: [],
   imports: [
+    ACLModule,
+    AuthModule,
     CustomerModule,
     MechanicModule,
     AdminModule,
     OrderModule,
+    CategoryModule,
+    MontirModule,
+    ServiceModule,
+    StatusModule,
+    VehicleModule,
+    UserModule,
+    CustomerOrderModule,
     HealthModule,
     PrismaModule,
     SecretsManagerModule,

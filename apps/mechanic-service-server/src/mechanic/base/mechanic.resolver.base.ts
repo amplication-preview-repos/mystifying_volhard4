@@ -13,16 +13,31 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { Mechanic } from "./Mechanic";
 import { MechanicCountArgs } from "./MechanicCountArgs";
 import { MechanicFindManyArgs } from "./MechanicFindManyArgs";
 import { MechanicFindUniqueArgs } from "./MechanicFindUniqueArgs";
 import { DeleteMechanicArgs } from "./DeleteMechanicArgs";
 import { MechanicService } from "../mechanic.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Mechanic)
 export class MechanicResolverBase {
-  constructor(protected readonly service: MechanicService) {}
+  constructor(
+    protected readonly service: MechanicService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "read",
+    possession: "any",
+  })
   async _mechanicsMeta(
     @graphql.Args() args: MechanicCountArgs
   ): Promise<MetaQueryPayload> {
@@ -32,14 +47,26 @@ export class MechanicResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [Mechanic])
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "read",
+    possession: "any",
+  })
   async mechanics(
     @graphql.Args() args: MechanicFindManyArgs
   ): Promise<Mechanic[]> {
     return this.service.mechanics(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => Mechanic, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "read",
+    possession: "own",
+  })
   async mechanic(
     @graphql.Args() args: MechanicFindUniqueArgs
   ): Promise<Mechanic | null> {
@@ -51,6 +78,11 @@ export class MechanicResolverBase {
   }
 
   @graphql.Mutation(() => Mechanic)
+  @nestAccessControl.UseRoles({
+    resource: "Mechanic",
+    action: "delete",
+    possession: "any",
+  })
   async deleteMechanic(
     @graphql.Args() args: DeleteMechanicArgs
   ): Promise<Mechanic | null> {

@@ -21,7 +21,35 @@ import { OrderList } from "./order/OrderList";
 import { OrderCreate } from "./order/OrderCreate";
 import { OrderEdit } from "./order/OrderEdit";
 import { OrderShow } from "./order/OrderShow";
-import { jwtAuthProvider } from "./auth-provider/ra-auth-jwt";
+import { CategoryList } from "./category/CategoryList";
+import { CategoryCreate } from "./category/CategoryCreate";
+import { CategoryEdit } from "./category/CategoryEdit";
+import { CategoryShow } from "./category/CategoryShow";
+import { MontirList } from "./montir/MontirList";
+import { MontirCreate } from "./montir/MontirCreate";
+import { MontirEdit } from "./montir/MontirEdit";
+import { MontirShow } from "./montir/MontirShow";
+import { ServiceList } from "./service/ServiceList";
+import { ServiceCreate } from "./service/ServiceCreate";
+import { ServiceEdit } from "./service/ServiceEdit";
+import { ServiceShow } from "./service/ServiceShow";
+import { StatusList } from "./status/StatusList";
+import { StatusCreate } from "./status/StatusCreate";
+import { StatusEdit } from "./status/StatusEdit";
+import { StatusShow } from "./status/StatusShow";
+import { VehicleList } from "./vehicle/VehicleList";
+import { VehicleCreate } from "./vehicle/VehicleCreate";
+import { VehicleEdit } from "./vehicle/VehicleEdit";
+import { VehicleShow } from "./vehicle/VehicleShow";
+import { UserList } from "./user/UserList";
+import { UserCreate } from "./user/UserCreate";
+import { UserEdit } from "./user/UserEdit";
+import { UserShow } from "./user/UserShow";
+import { CustomerOrderList } from "./customerOrder/CustomerOrderList";
+import { CustomerOrderCreate } from "./customerOrder/CustomerOrderCreate";
+import { CustomerOrderEdit } from "./customerOrder/CustomerOrderEdit";
+import { CustomerOrderShow } from "./customerOrder/CustomerOrderShow";
+import { httpAuthProvider } from "./auth-provider/ra-auth-http";
 
 const App = (): React.ReactElement => {
   const [dataProvider, setDataProvider] = useState<DataProvider | null>(null);
@@ -42,7 +70,7 @@ const App = (): React.ReactElement => {
       <Admin
         title={"MechanicService"}
         dataProvider={dataProvider}
-        authProvider={jwtAuthProvider}
+        authProvider={httpAuthProvider}
         theme={theme}
         dashboard={Dashboard}
         loginPage={Login}
@@ -74,6 +102,55 @@ const App = (): React.ReactElement => {
           edit={OrderEdit}
           create={OrderCreate}
           show={OrderShow}
+        />
+        <Resource
+          name="Category"
+          list={CategoryList}
+          edit={CategoryEdit}
+          create={CategoryCreate}
+          show={CategoryShow}
+        />
+        <Resource
+          name="Montir"
+          list={MontirList}
+          edit={MontirEdit}
+          create={MontirCreate}
+          show={MontirShow}
+        />
+        <Resource
+          name="Service"
+          list={ServiceList}
+          edit={ServiceEdit}
+          create={ServiceCreate}
+          show={ServiceShow}
+        />
+        <Resource
+          name="Status"
+          list={StatusList}
+          edit={StatusEdit}
+          create={StatusCreate}
+          show={StatusShow}
+        />
+        <Resource
+          name="Vehicle"
+          list={VehicleList}
+          edit={VehicleEdit}
+          create={VehicleCreate}
+          show={VehicleShow}
+        />
+        <Resource
+          name="User"
+          list={UserList}
+          edit={UserEdit}
+          create={UserCreate}
+          show={UserShow}
+        />
+        <Resource
+          name="CustomerOrder"
+          list={CustomerOrderList}
+          edit={CustomerOrderEdit}
+          create={CustomerOrderCreate}
+          show={CustomerOrderShow}
         />
       </Admin>
     </div>
